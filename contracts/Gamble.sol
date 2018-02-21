@@ -26,11 +26,17 @@ contract Gamble {
         owner = msg.sender;
     }
 
+    // Event sending out the game result
+    event GameEndResult(address from, address to, uint amount);
+
+    // Event when number of gamer changed
+    event UpdateGamerNum(uint num);
+
+
     modifier onlyOwner() {
         require(msg.sender == owner);
         _;
     }
-
 
     modifier gamblerExist(address gamblerId) {
         var gambler = gamblers[gamblerId];
@@ -71,6 +77,7 @@ contract Gamble {
 
         currentGameGamblers.push(gamblerId);
         totalGambler = currentGameGamblers.length;
+        UpdateGamerNum(totalGambler);
     }
 
     // Get gambler balance information
@@ -96,6 +103,7 @@ contract Gamble {
         currentGameGamblers[idx] = currentGameGamblers[currentGameGamblers.length-1];
         currentGameGamblers.length--;
         totalGambler = currentGameGamblers.length;
+        UpdateGamerNum(totalGambler);
     }
 
     // A gambler is allowed to withdraw balance if he is not in a game
@@ -164,14 +172,17 @@ contract Gamble {
             uint resultMoney = totalMoney.div(1000);
             resultMoney = resultMoney.mul(gamblerRandVal[i]);
             uint currentBalance = gamblers[currentGameGamblers[i]].balance;
-            gamblers[currentGameGamblers[i]].balance = currentBalance.add(1 ether).sub(resultMoney);
+            gamblers[currentGameGamblers[i]].balance = currentBalance.sub(1 ether).add(resultMoney);
             gamblers[currentGameGamblers[i]].historyResult.push(resultMoney);
             gamblers[currentGameGamblers[i]].historyTime.push(gameTime);
+            // Send out the event for game result per user
+            GameEndResult(msg.sender, currentGameGamblers[i], gamblers[currentGameGamblers[i]].balance);
         }
 
         // Clean the list and end the game
         currentGameGamblers.length = 0;
         inGame = false;
+        UpdateGamerNum(0);
 
     }
     
