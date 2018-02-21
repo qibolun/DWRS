@@ -7,9 +7,9 @@ Decentralized Wealth Re-distribution System
 
 
 # To get start
-1.start testrpc
+1. start testrpc
 testrpc
-2.install node packages
+2. install node packages
 npm install
-3.start server
+3. start server
 npm start
