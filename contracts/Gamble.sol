@@ -57,6 +57,11 @@ contract Gamble {
             totalAmount = msg.value;
         }
         assert(totalAmount >= 1 ether);
+
+        // check if the gamer have already joined
+        for(uint i=0; i<currentGameGamblers.length; i++){
+            assert(currentGameGamblers[i] != msg.sender);
+        }
         _;
     }
 
@@ -82,7 +87,11 @@ contract Gamble {
 
     // Get gambler balance information
     function checkGamblerBalance(address gamblerId) public constant gamblerExist(gamblerId) returns(uint balance){
-        balance =  gamblers[gamblerId].balance;
+        balance = gamblers[gamblerId].balance;
+    }
+
+    function getNumberOfGamer() public constant returns(uint numGamer){
+        numGamer = currentGameGamblers.length;
     }
 
     // A gambler can quit game anytime before game start

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Button } from 'antd'
 
 class Common extends React.Component{
 
@@ -7,12 +8,14 @@ class Common extends React.Component{
 	constructor(props) {
 		super(props);
 		this.state = {
-			currentGameGamblers:0
+			currentGameGamblers:0,
+			balance:0
 		}
+		this.getCurrentGamer = this.getCurrentGamer.bind(this)
 	}
 
 	componentDidMount(){
-		const { gamble, web3 } = this.props;
+		const { gamble } = this.props
 
 		// Start Watch UpdateGamerNum event
 		this.UpdateGamerNum = gamble.UpdateGamerNum()
@@ -26,6 +29,9 @@ class Common extends React.Component{
 				console.log(error);
 			}
 		})
+
+		// Read current balance
+		this.readBalance()
 	}
 
 
@@ -33,11 +39,41 @@ class Common extends React.Component{
 		this.UpdateGamerNum.stopWatching()
 	}
 
+	readBalance() {
+		const { gamble, account } = this.props
+		gamble.checkGamblerBalance(account, {
+			from:account,
+		}).then((result) => {
+			this.setState({
+				balance:result.toNumber()
+			})
+		}).catch(() => {
+			console.log("gambler does not exist in record")
+			this.setState({
+				balance:0
+			})
+		})
+	}
+
+	getCurrentGamer(){
+		const { gamble, account } = this.props
+		gamble.getNumberOfGamer({
+			from:account
+		}).then((result) => {
+			console.log(result.toNumber())
+		}).catch((error) => {
+			console.log("Error when getting current number of gamer", error)
+		})
+
+	}
+
 
 	render(){
 		return(
 			<div>
 				Current Gamer: {this.state.currentGameGamblers}/2
+				Current Balance: {this.state.balance}
+				<Button onClick={this.getCurrentGamer}> Get Num Gamer</Button>
 			</div>
 		)
 	}

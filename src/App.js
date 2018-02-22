@@ -3,6 +3,7 @@ import GambleContract from '../build/contracts/Gamble.json'
 import getWeb3 from './utils/getWeb3'
 
 import Common from './components/Common'
+import Gambler from './components/Gambler'
 import {Spin} from 'antd'
 
 import './css/oswald.css'
@@ -66,11 +67,29 @@ class App extends Component {
     })
   }
 
+  componentDidMount(){
+    // Do a polling to detect the account change
+    this.timer = setInterval(()=> this.watchAccount(), 1000);
+  }
 
+  componentWillUnmount() {
+    this.timer = null;
+  }
 
+  watchAccount(){
+    if(this.state.web3 && this.state.account){
+      if (this.state.web3.eth.accounts[0] != this.state.account){
+        //Update state when account change
+        console.log("detect account change")
+        this.setState({
+          account:this.state.web3.eth.accounts[0]
+        })
+      }
+    }
+
+  }
 
   render() {
-
     const { account, gamble, web3 } = this.state
     return (
       <div className="App">
@@ -80,7 +99,10 @@ class App extends Component {
         </nav>
 
         {gamble ? (
-          <Common account={account} gamble={gamble} web3={web3}></Common>
+          <div>
+            <Common account={account} gamble={gamble} web3={web3}></Common>
+            <Gambler account={account} gamble={gamble} web3={web3}></Gambler>
+          </div>
         ) : (
           <Spin tip="Loading..." />
         )}
