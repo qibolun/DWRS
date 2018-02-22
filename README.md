@@ -1,7 +1,7 @@
 # DWRS
 Decentralized Wealth Re-distribution System
 
-# Install required package
+# Install required packages
 1. Ganache
 2. truffle
 3. npm install (install node packages)
