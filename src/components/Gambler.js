@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Button, Alert } from 'antd'
+import { Button, Alert, Icon, Spin } from 'antd'
 
 class Gambler extends React.Component{
 
@@ -40,13 +40,16 @@ class Gambler extends React.Component{
 
   		//kill the message after 1.5 sec
 
-  		setTimeout(function(){this.setState({dispAlert:false})}.bind(this), 1500);
+  		setTimeout(function(){this.setState({dispAlert:false})}.bind(this), 3000);
   	}
 
 	joinGame(){
 		// Join game, pay 1 ether at a time
 		// FIXME, and a box that allows you to pay arbitary number of ether at a time
-		const { gamble, account, web3 } = this.props
+
+		const { gamble, account, web3, loading, unloading } = this.props
+		// start loading animation
+		loading()
 		gamble.joinGame({
 			from: account,
 			value: web3.toWei(1)
@@ -63,6 +66,7 @@ class Gambler extends React.Component{
 		}).catch((error) => {
 			console.log("joinGame error!")
 			console.log("error")
+			unloading()
 			this.setAlert(
 				"error",
 				"Join Game Error",
@@ -73,7 +77,8 @@ class Gambler extends React.Component{
 
 	quitGame(){
 		// Quit game
-		const { gamble, account } = this.props
+		const { gamble, account, loading, unloading } = this.props
+		loading()
 		gamble.quitGame({
 			from:account
 		}).then((result) => {
@@ -87,6 +92,7 @@ class Gambler extends React.Component{
 				"You have quitted game!"
 			)
 		}).catch((error) => {
+			unloading()
 			console.log("quitGame error")
 			console.log(error)
 			this.setAlert(
@@ -99,7 +105,8 @@ class Gambler extends React.Component{
 
 	withDrawBalance(){
 		// Withdraw balance
-		const { gamble, account } = this.props
+		const { gamble, account, loading, unloading } = this.props
+		loading()
 		gamble.withdraw({
 			from:account
 		}).then((result) => {
@@ -110,6 +117,7 @@ class Gambler extends React.Component{
 				"You have withdrawed eth!"
 			)
 		}).catch((error) => {
+			unloading()
 			console.log("withdraw error")
 			console.log(error)
 			this.setAlert(

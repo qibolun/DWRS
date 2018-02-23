@@ -5,7 +5,7 @@ import getWeb3 from './utils/getWeb3'
 import Common from './components/Common'
 import Gambler from './components/Gambler'
 import Owner from './components/Owner'
-import {Spin} from 'antd'
+import { Spin, Icon } from 'antd'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -19,7 +19,8 @@ class App extends Component {
 
     this.state = {
       storageValue: 0,
-      web3: null
+      web3: null,
+      loading:false
     }
   }
 
@@ -85,6 +86,19 @@ class App extends Component {
     this.timer = null;
   }
 
+  loading(){
+    this.setState({
+      loading:true
+    })
+  }
+
+  unloading(){
+    this.setState({
+      loading:false
+    })
+  }
+
+
   watchAccount(){
     if(this.state.web3 && this.state.account){
       if (this.state.web3.eth.accounts[0] !== this.state.account){
@@ -95,7 +109,6 @@ class App extends Component {
         })
       }
     }
-
   }
 
   render() {
@@ -108,14 +121,27 @@ class App extends Component {
             <a href="#" className="pure-menu-heading pure-menu-link">DWRS - Decentralized Wealth Re-distribution System</a>
         </nav>
 
+
         {gamble ? (
           <div>
-            <Common account={account} gamble={gamble} web3={web3}></Common>
-            <Gambler account={account} gamble={gamble} web3={web3}></Gambler>
-            {owner === account ? (
-              <Owner account={account} gamble={gamble} web3={web3}></Owner>
-            ) : (<div />)
-            }
+            <Spin spinning={this.state.loading}>
+              <Common 
+                account={account} 
+                gamble={gamble} 
+                web3={web3} 
+                loading={this.loading.bind(this)}
+                unloading={this.unloading.bind(this)} />
+              <Gambler 
+                account={account} 
+                gamble={gamble} 
+                web3={web3}
+                loading={this.loading.bind(this)}
+                unloading={this.unloading.bind(this)} />
+              {owner === account ? (
+                <Owner account={account} gamble={gamble} web3={web3}></Owner>
+              ) : (<div />)
+              }
+            </Spin>
           </div>
         ) : (
           <Spin tip="Loading..." />

@@ -15,11 +15,12 @@ class Common extends React.Component{
 	}
 
 	componentDidMount(){
-		const { gamble, account } = this.props
+		const { gamble, account, unloading } = this.props
 		// Start Watch UpdateGamerNum event
 		this.UpdateGamerNum = gamble.UpdateGamerNum()
 		this.UpdateGamerNum.watch(function(error, result){
 			console.log("update gamer num event triggered")
+			unloading()
 			if(!error){
 				this.setState({
 					currentGameGamblers:result.args.num.toNumber()
@@ -32,6 +33,7 @@ class Common extends React.Component{
 		this.UpdateGamerBalance = gamble.UpdateGamerBalance({to:account},{})
 		this.UpdateGamerBalance.watch(function(error, result){
 			console.log("update gamer balance event triggered")
+			unloading()
 			if(!error){
 				this.setState({
 					balance:result.args.num.toNumber()
@@ -72,7 +74,7 @@ class Common extends React.Component{
 	}
 
 	getCurrentGamer(){
-		const { gamble, account} = this.props
+		const { gamble, account } = this.props
 		gamble.getNumberOfGamer({
 			from:account
 		}).then((result) => {
