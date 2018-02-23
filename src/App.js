@@ -78,7 +78,7 @@ class App extends Component {
 
   watchAccount(){
     if(this.state.web3 && this.state.account){
-      if (this.state.web3.eth.accounts[0] != this.state.account){
+      if (this.state.web3.eth.accounts[0] !== this.state.account){
         //Update state when account change
         console.log("detect account change")
         this.setState({

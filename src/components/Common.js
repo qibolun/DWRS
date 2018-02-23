@@ -17,9 +17,12 @@ class Common extends React.Component{
 	componentDidMount(){
 		const { gamble } = this.props
 
+		console.log("component did mount")
+
 		// Start Watch UpdateGamerNum event
-		this.UpdateGamerNum = gamble.UpdateGamerNum(function(error, result){
-			console.log("hm", result)
+		this.UpdateGamerNum = gamble.UpdateGamerNum()
+		this.UpdateGamerNum.watch(function(error, result){
+			console.log("event triggered")
 			if(!error){
 				this.setState({
 					currentGameGamblers:result.args.num
@@ -30,16 +33,21 @@ class Common extends React.Component{
 		})
 
 		// Read current balance
-		this.readBalance()
+		this.readBalance(this.props.account)
 	}
 
+	componentWillReceiveProps(nextProps){
+		if(this.props.account !== nextProps.account){
+			this.readBalance(nextProps.account)
+		}
+  	}
 
 	componentWillUnmount() {
 		this.UpdateGamerNum.stopWatching()
 	}
 
-	readBalance() {
-		const { gamble, account } = this.props
+	readBalance(account) {
+		const { gamble } = this.props
 		gamble.checkGamblerBalance(account, {
 			from:account,
 		}).then((result) => {
