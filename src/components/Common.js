@@ -76,10 +76,11 @@ class Common extends React.Component{
 
 
 	render(){
+		const { web3 } = this.props
 		return(
 			<div>
 				Current Gamer: {this.state.currentGameGamblers}/2
-				Current Balance: {this.state.balance}
+				Current Balance: {web3.fromWei(this.state.balance)} ether
 				<Button onClick={this.getCurrentGamer}> Get Num Gamer</Button>
 			</div>
 		)
