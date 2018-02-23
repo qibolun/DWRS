@@ -64,6 +64,14 @@ class App extends Component {
         this.setState({
           gamble: instance
         })
+
+        instance.owner().then((result) => {
+          this.setState({
+            owner: result
+          })
+        }).catch((error) => {
+          console.log(error)
+        })
       })
     })
   }
@@ -91,7 +99,8 @@ class App extends Component {
   }
 
   render() {
-    const { account, gamble, web3 } = this.state
+    const { account, gamble, web3, owner } = this.state
+    // Display owner component when owner account gets selected in metamask
     return (
       <div className="App">
         
@@ -103,15 +112,14 @@ class App extends Component {
           <div>
             <Common account={account} gamble={gamble} web3={web3}></Common>
             <Gambler account={account} gamble={gamble} web3={web3}></Gambler>
-            <Owner account={account} gamble={gamble} web3={web3}></Owner>
+            {owner === account ? (
+              <Owner account={account} gamble={gamble} web3={web3}></Owner>
+            ) : (<div />)
+            }
           </div>
         ) : (
           <Spin tip="Loading..." />
         )}
-
-
-
-        
       </div>
     );
   }
