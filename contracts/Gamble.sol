@@ -83,7 +83,7 @@ contract Gamble {
             gamblers[gamblerId] = newGambler;
         }
         if (msg.value > 0){
-            UpdateGamerBalance(msg.sender, msg.value);
+            UpdateGamerBalance(msg.sender, gamblers[gamblerId].balance);
         }
 
         currentGameGamblers.push(gamblerId);
