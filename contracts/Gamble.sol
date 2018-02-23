@@ -32,6 +32,9 @@ contract Gamble {
     // Event when number of gamer changed
     event UpdateGamerNum(uint num);
 
+    // Event when balance changed
+    event UpdateGamerBalance(address to, uint num);
+
 
     modifier onlyOwner() {
         require(msg.sender == owner);
@@ -78,6 +81,9 @@ contract Gamble {
             newGambler.id = gamblerId;
             newGambler.balance = msg.value;
             gamblers[gamblerId] = newGambler;
+        }
+        if (msg.value > 0){
+            UpdateGamerBalance(msg.sender, msg.value);
         }
 
         currentGameGamblers.push(gamblerId);
@@ -141,6 +147,7 @@ contract Gamble {
         amount = gamblers[msg.sender].balance;
         gamblers[msg.sender].balance = 0;
         msg.sender.transfer(amount);
+        UpdateGamerBalance(msg.sender, 0);
     }
 
     // tip the owner
