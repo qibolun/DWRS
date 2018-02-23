@@ -6,6 +6,8 @@ Decentralized Wealth Re-distribution System
 2. truffle
 3. npm install (install node packages)
 4. metamask (chrome extension)
+Please install metamask from source as the chrome store version is super old and buggy!!!!
+https://github.com/MetaMask/metamask-extension
 
 
 # To get start

@@ -16,21 +16,18 @@ class Common extends React.Component{
 
 	componentDidMount(){
 		const { gamble } = this.props
-
-		console.log("component did mount")
-
 		// Start Watch UpdateGamerNum event
 		this.UpdateGamerNum = gamble.UpdateGamerNum()
 		this.UpdateGamerNum.watch(function(error, result){
-			console.log("event triggered")
+			console.log("update gamer num event triggered")
 			if(!error){
 				this.setState({
-					currentGameGamblers:result.args.num
+					currentGameGamblers:result.args.num.toNumber()
 				})
 			}else{
 				console.log(error);
 			}
-		})
+		}.bind(this))
 
 		// Read current balance
 		this.readBalance(this.props.account)
@@ -63,11 +60,11 @@ class Common extends React.Component{
 	}
 
 	getCurrentGamer(){
-		const { gamble, account } = this.props
+		const { gamble, account} = this.props
 		gamble.getNumberOfGamer({
 			from:account
 		}).then((result) => {
-			console.log(result.toNumber())
+			//console.log(result.toNumber())
 		}).catch((error) => {
 			console.log("Error when getting current number of gamer", error)
 		})
