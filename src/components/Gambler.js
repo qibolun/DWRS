@@ -5,7 +5,9 @@ class Gambler extends React.Component{
 
 	constructor(props) {
 		super(props);
-		this.state = {}
+		this.state = {
+			joined: false
+		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
 	}
@@ -18,6 +20,9 @@ class Gambler extends React.Component{
 		}).then((result) => {
 			console.log("Game joined")
 			console.log(result)
+			this.setState({
+				joined:true
+			})
 		}).catch(() => {
 			console.log("joinGame error!")
 		})
@@ -30,6 +35,9 @@ class Gambler extends React.Component{
 		}).then((result) => {
 			console.log("Game quitted")
 			console.log(result)
+			this.setState({
+				joined:false
+			})
 		}).catch((error) => {
 			console.log("quitGame error")
 			console.log(error)
@@ -40,8 +48,8 @@ class Gambler extends React.Component{
 		return(
 			<div>
 				This is gambler Component
-				<Button onClick={this.joinGame}>Join Game</Button>
-				<Button onClick={this.quitGame}>Quit Game</Button>
+				<Button disabled={this.state.joined} onClick={this.joinGame}>Join Game</Button>
+				<Button disabled={!this.state.joined} onClick={this.quitGame}>Quit Game</Button>
 			</div>
 		)
 	}
