@@ -4,6 +4,7 @@ import getWeb3 from './utils/getWeb3'
 
 import Common from './components/Common'
 import Gambler from './components/Gambler'
+import Owner from './components/Owner'
 import {Spin} from 'antd'
 
 import './css/oswald.css'
@@ -102,6 +103,7 @@ class App extends Component {
           <div>
             <Common account={account} gamble={gamble} web3={web3}></Common>
             <Gambler account={account} gamble={gamble} web3={web3}></Gambler>
+            <Owner account={account} gamble={gamble} web3={web3}></Owner>
           </div>
         ) : (
           <Spin tip="Loading..." />
