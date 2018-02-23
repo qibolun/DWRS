@@ -18,9 +18,8 @@ class Common extends React.Component{
 		const { gamble } = this.props
 
 		// Start Watch UpdateGamerNum event
-		this.UpdateGamerNum = gamble.UpdateGamerNum()
-		this.UpdateGamerNum.watch(function(error, result){
-			console.log(result)
+		this.UpdateGamerNum = gamble.UpdateGamerNum(function(error, result){
+			console.log("hm", result)
 			if(!error){
 				this.setState({
 					currentGameGamblers:result.args.num
