@@ -76,7 +76,7 @@ class Common extends React.Component{
 		gamble.getNumberOfGamer({
 			from:account
 		}).then((result) => {
-			//console.log(result.toNumber())
+			console.log(result.toNumber())
 		}).catch((error) => {
 			console.log("Error when getting current number of gamer", error)
 		})
