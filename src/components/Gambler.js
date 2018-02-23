@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Button } from 'antd'
+
 class Gambler extends React.Component{
 
 	constructor(props) {
@@ -10,19 +11,24 @@ class Gambler extends React.Component{
 		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
+		this.withDrawBalance = this.withDrawBalance.bind(this)
 	}
 
 	componentDidMount(){
+		// After mount, check is user in game
 		this.checkInGame(this.props.account)
 	}
 
 	componentWillReceiveProps(nextProps){
+		// If account get changed, re-check if user in game
 		if(this.props.account !== nextProps.account){
 			this.checkInGame(nextProps.account)
 		}
   	}
 
 	joinGame(){
+		// Join game, pay 1 ether at a time
+		// FIXME, and a box that allows you to pay arbitary number of ether at a time
 		const { gamble, account, web3 } = this.props
 		gamble.joinGame({
 			from: account,
@@ -39,12 +45,12 @@ class Gambler extends React.Component{
 	}
 
 	quitGame(){
+		// Quit game
 		const { gamble, account } = this.props
 		gamble.quitGame({
 			from:account
 		}).then((result) => {
 			console.log("Game quitted")
-			console.log(result)
 			this.setState({
 				joined:false
 			})
@@ -52,6 +58,20 @@ class Gambler extends React.Component{
 			console.log("quitGame error")
 			console.log(error)
 		})
+	}
+
+	withDrawBalance(){
+		// Withdraw balance
+		const { gamble, account } = this.props
+		gamble.withdraw({
+			from:account
+		}).then((result) => {
+			console.log("balance withdrawed!")
+		}).catch((error) => {
+			console.log("withdraw error")
+			console.log(error)
+		})
+
 	}
 
 	checkInGame(account){
@@ -76,6 +96,7 @@ class Gambler extends React.Component{
 				Game joined : {this.state.joined.toString()}
 				<Button disabled={this.state.joined} onClick={this.joinGame}>Join Game</Button>
 				<Button disabled={!this.state.joined} onClick={this.quitGame}>Quit Game</Button>
+				<Button disabled={this.state.joined} onClick={this.withDrawBalance}> WithDraw Balance</Button>
 			</div>
 		)
 	}
