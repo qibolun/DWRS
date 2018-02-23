@@ -12,6 +12,16 @@ class Gambler extends React.Component{
 		this.quitGame = this.quitGame.bind(this)
 	}
 
+	componentDidMount(){
+		this.checkInGame(this.props.account)
+	}
+
+	componentWillReceiveProps(nextProps){
+		if(this.props.account !== nextProps.account){
+			this.checkInGame(nextProps.account)
+		}
+  	}
+
 	joinGame(){
 		const { gamble, account, web3 } = this.props
 		gamble.joinGame({
@@ -44,10 +54,26 @@ class Gambler extends React.Component{
 		})
 	}
 
+	checkInGame(account){
+		const { gamble } = this.props
+		gamble.checkGamblerInGame(account, {
+			from:account,
+		}).then((result) => {
+			this.setState({
+				joined:result
+			})
+		}).catch(() => {
+			console.log("check gambler in game error")
+			this.setState({
+				joined:false
+			})
+		})
+	}
+
 	render(){
 		return(
 			<div>
-				This is gambler Component
+				Game joined : {this.state.joined.toString()}
 				<Button disabled={this.state.joined} onClick={this.joinGame}>Join Game</Button>
 				<Button disabled={!this.state.joined} onClick={this.quitGame}>Quit Game</Button>
 			</div>

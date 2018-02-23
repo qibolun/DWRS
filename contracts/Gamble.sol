@@ -90,6 +90,18 @@ contract Gamble {
         balance = gamblers[gamblerId].balance;
     }
 
+    // Check if gambler in game
+    function checkGamblerInGame(address gamblerId) public constant returns(bool joined){
+        joined = false;
+        for(uint i=0; i<currentGameGamblers.length; i++){
+            if(currentGameGamblers[i] == gamblerId){
+                joined = true;
+                break;
+            }
+        }
+
+    }
+
     function getNumberOfGamer() public constant returns(uint numGamer){
         numGamer = currentGameGamblers.length;
     }
