@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import GambleContract from '../build/contracts/Gamble.json'
 import getWeb3 from './utils/getWeb3'
+import Parallax from 'parallax-js'
 
 import Common from './components/Common'
 import Gambler from './components/Gambler'
@@ -95,10 +96,12 @@ class App extends Component {
   componentDidMount(){
     // Do a polling to detect the account change
     this.timer = setInterval(()=> this.watchAccount(), 1000);
+    this.parallax = new Parallax(this.scene)
   }
 
   componentWillUnmount() {
     this.timer = null;
+    this.parallax.disable()
   }
 
   loading(){
@@ -136,6 +139,14 @@ class App extends Component {
 
   render() {
     const {dispAlert, alert, account, gamble, web3, owner } = this.state
+    const pStyle = {
+      transform: "translate3d(0px, 0px, 0px)"
+    };
+    const gambleStyle = {
+        position: "absolute",
+        zIndex: 1000,
+        background: 'white',
+    }
     // Display owner component when owner account gets selected in metamask
     return (
       <div className="App">
@@ -144,6 +155,7 @@ class App extends Component {
             <a href="#" className="pure-menu-heading pure-menu-link">DWRS - Decentralized Wealth Re-distribution System</a>
         </nav>
 
+        <div style={gambleStyle}>
         {dispAlert? (
           <Alert message={alert.msg} description={alert.desc} type={alert.type} showIcon closable onClose={this.onClose}/>
         ) : (<div />)
@@ -181,6 +193,24 @@ class App extends Component {
         ) : (
           <Spin tip="Loading..." />
         )}
+
+        </div>
+
+        <div id="page">
+            <div id="ParallaxWrapper">
+                <div id="ContainerParallax" className="container">
+                    <ul ref={el => this.scene = el} className="scene framed" >
+                        <li id="scene1" className="layer layer1" data-depth="0.5" data-relativeinput="true" data-cliprelativeinput="true" data-limit-y="10" data-limit-x="10" data-invert-x="true" data-invert-y="true" data-friction-x="0.3" data-friction-y="0.3" data-origin-x="{param_originX}" data-origin-y="{param_originY}" style={pStyle}></li>
+                        <li id="scene2" className="layer layer2" data-depth="0.1" data-relativeinput="true" data-cliprelativeinput="true" data-limit-y="10" data-limit-x="10" data-invert-x="true" data-invert-y="true" data-friction-x="0.3" data-friction-y="0.3" data-origin-x="{param_originX}" data-origin-y="{param_originY}" style={pStyle}></li>
+                        <li id="scene3" className="layer layer3" data-depth="0.3" data-relativeinput="true" data-cliprelativeinput="true" data-limit-y="10" data-limit-x="10" data-invert-x="true" data-invert-y="true" data-friction-x="0.3" data-friction-y="0.3" data-origin-x="{param_originX}" data-origin-y="{param_originY}" style={pStyle}></li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+
       </div>
     );
   }
