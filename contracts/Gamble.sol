@@ -35,6 +35,9 @@ contract Gamble {
     // Event when balance changed
     event UpdateGamerBalance(address to, uint num);
 
+    // Event when contract owner receive tips from other
+    event OwnerReceivedTips(address from, uint num);
+
 
     modifier onlyOwner() {
         require(msg.sender == owner);
@@ -153,6 +156,7 @@ contract Gamble {
     // tip the owner
     function tipOwner() public payable{
         owner.transfer(msg.value);
+        OwnerReceivedTips(msg.sender, msg.value);
     }
 
     // Get a random value

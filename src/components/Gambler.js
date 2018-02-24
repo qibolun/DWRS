@@ -16,6 +16,7 @@ class Gambler extends React.Component{
 		this.quitGame = this.quitGame.bind(this)
 		this.withDrawBalance = this.withDrawBalance.bind(this)
 		this.handleChange = this.handleChange.bind(this)
+		this.tipOwner = this.tipOwner.bind(this)
 	}
 
 	componentDidMount(){
@@ -112,7 +113,7 @@ class Gambler extends React.Component{
 	withDrawBalance(){
 		// Withdraw balance
 
-		const { setAlert,gamble, account, loading, unloading } = this.props
+		const { setAlert, gamble, account, loading, unloading } = this.props
 		loading()
 		gamble.withdraw({
 			from:account
@@ -131,6 +132,32 @@ class Gambler extends React.Component{
 				"error",
 				"Withdraw Error",
 				"withdraw failed! Check metamask and console for error message!"
+			)
+		})
+
+	}
+
+	tipOwner(){
+		// tip contract owner
+		const { setAlert, gamble, account, web3 } = this.props
+		const amount = 0.1 //tip 0.1 eth now
+		gamble.tipOwner({
+			from: account,
+			value: web3.toWei(amount)
+		}).then((result) => {
+			console.log("tipped owner")
+			setAlert(
+				"success",
+				"Tip Owner Success",
+				"You have tipped owner!"
+			)
+		}).catch((error) => {
+			console.log("Tip Owner error!")
+			console.log("error")
+			setAlert(
+				"error",
+				"Tip Owner Error",
+				"tip owner failed! Check metamask and console for error message!"
 			)
 		})
 
@@ -164,7 +191,7 @@ class Gambler extends React.Component{
 				"GameEndResult Event failed! Check metamask and console for error message!"
 			)
 		}else{
-			if(result.args.to == account){
+			if(result.args.to === account){
 				const diff = web3.fromWei(result.args.amount.toNumber()) - 1
 				const msg =  diff >= 0  ? 
 				"Game Ended. You won " + diff + " eth.": 
@@ -192,7 +219,7 @@ class Gambler extends React.Component{
 				<Button disabled={this.state.joined} onClick={this.joinGame}>Join Game</Button>
 				<Button disabled={!this.state.joined} onClick={this.quitGame}>Quit Game</Button>
 				<Button disabled={this.state.joined} onClick={this.withDrawBalance}> WithDraw Balance</Button>
-
+				<Button onClick={this.tipOwner}> Tip Owner</Button>
 			</div>
 		)
 	}
