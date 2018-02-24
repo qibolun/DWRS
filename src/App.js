@@ -120,7 +120,8 @@ class App extends Component {
         //Update state when account change
         console.log("detect account change")
         this.setState({
-          account:this.state.web3.eth.accounts[0]
+          account:this.state.web3.eth.accounts[0],
+          dispAlert:false
         })
       }
     }
