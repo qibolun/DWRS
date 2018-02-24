@@ -48,10 +48,17 @@ class Owner extends React.Component{
 		})
 	}
 	render(){
+
+		const style = {
+			marginTop: '100px',
+			backgroundColor: '#52c41a',
+			borderColor: '#52c41a',
+			height: '100px',
+			width: '150px'
+		}
 		return(
 			<div>
-				This is owner component
-				<Button type="primary" icon="play-circle" onClick={this.startGame.bind(this)}>
+				<Button style={style} type="primary" icon="play-circle" onClick={this.startGame.bind(this)}>
           			Start Game
         		</Button>
 			</div>

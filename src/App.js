@@ -7,7 +7,7 @@ import Common from './components/Common'
 import Gambler from './components/Gambler'
 import Owner from './components/Owner'
 
-import { Spin, Icon ,Alert} from 'antd'
+import { Spin, Icon ,Alert, Col, Row} from 'antd'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -145,16 +145,24 @@ class App extends Component {
     const gambleStyle = {
         position: "absolute",
         zIndex: 1000,
-        background: 'white',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        padding: '30px',
+        height: '600px',
+        marginTop: '50px',
+        width: '700px',
+        color:'white',
+        textAlign:'center'
     }
     // Display owner component when owner account gets selected in metamask
     return (
-      <div className="App">
+      <div className="App" >
         
         <nav className="navbar pure-menu pure-menu-horizontal">
             <a href="#" className="pure-menu-heading pure-menu-link">DWRS - Decentralized Wealth Re-distribution System</a>
         </nav>
 
+        <Row>
+        <Col span={12} offset={6}>
         <div style={gambleStyle}>
         {dispAlert? (
           <Alert message={alert.msg} description={alert.desc} type={alert.type} showIcon closable onClose={this.onClose}/>
@@ -178,6 +186,7 @@ class App extends Component {
                 web3={web3}
                 loading={this.loading.bind(this)}
                 unloading={this.unloading.bind(this)} />
+                <hr/>
               {owner === account ? (
                 <Owner 
                   setAlert={this.setAlert.bind(this)} 
@@ -195,7 +204,8 @@ class App extends Component {
         )}
 
         </div>
-
+      </Col>
+      </Row>
         <div id="page">
             <div id="ParallaxWrapper">
                 <div id="ContainerParallax" className="container">

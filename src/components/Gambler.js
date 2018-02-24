@@ -1,7 +1,6 @@
 import React from 'react'
 
-
-import { Modal,Button, Input } from 'antd'
+import { InputNumber,Modal,Button} from 'antd'
 
 class Gambler extends React.Component{
 
@@ -10,13 +9,15 @@ class Gambler extends React.Component{
 		this.state = {
 			joined: false,
 			gameResultVisible: false,
-			eth:0
+			eth:0,
+			amountModalVisible: false,
 		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
 		this.withDrawBalance = this.withDrawBalance.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.tipOwner = this.tipOwner.bind(this)
+
 	}
 
 	componentDidMount(){
@@ -39,9 +40,9 @@ class Gambler extends React.Component{
   	}
 
 
-  	handleChange(event){
+  	handleChange(value){
   		this.setState({
-  			eth: event.target.value
+  			eth: value
   		})
   	}
 
@@ -79,6 +80,8 @@ class Gambler extends React.Component{
 				"Join game failed! Check metamask and console for error message!"
 			)
 		})
+
+		this.onAmountModalCancel();
 	}
 
 	quitGame(){
@@ -210,16 +213,56 @@ class Gambler extends React.Component{
 		}
 	}
 
+	RenderButtons(props){
+
+		const style={
+			margin: '10px'
+		}
+		if(this.state.joined){
+			return <Button style={style} type="danger" icon="user-delete" size='large' onClick={this.quitGame}>Unready</Button>
+		}else{
+			return (
+				<div>
+			<Button style={style} type="primary" icon="user-add" size='large' onClick={this.showAmountModal.bind(this)}> Ready </Button>
+			<br/>
+			<Button style={style} type="primary" icon="user-add" size='default' onClick={this.withDrawBalance}> WithDraw Balance</Button>
+			</div>
+			)
+		}
+	}
+
+	onAmountModalCancel(){
+		this.props.unloading()
+		this.setState({
+	      amountModalVisible: false,
+	    });
+	}
+
+	  showAmountModal() {
+	    this.setState({
+	      amountModalVisible: true,
+	    });
+	  }
+
 	render(){
 		
 		return(
 			<div>
-				Game joined : {this.state.joined.toString()}
-				<Input placeholder="ether" type="number" value={this.state.eth} onChange={this.handleChange} />
-				<Button disabled={this.state.joined} onClick={this.joinGame}>Join Game</Button>
-				<Button disabled={!this.state.joined} onClick={this.quitGame}>Quit Game</Button>
-				<Button disabled={this.state.joined} onClick={this.withDrawBalance}> WithDraw Balance</Button>
-				<Button onClick={this.tipOwner}> Tip Owner</Button>
+
+				{this.RenderButtons()}
+				
+				<br/>
+
+				<Modal
+			        visible={this.state.amountModalVisible}
+			        title="Choose bet amount!"
+			        okText="Confirm"
+			        onCancel={this.onAmountModalCancel.bind(this)}
+			        onOk={this.joinGame}
+			    >
+			        <InputNumber defaultValue={0} min={0} max={10} step={0.1} formatter={value => `${value} ETH`} onChange={this.handleChange.bind(this)} />
+			    </Modal>
+
 			</div>
 		)
 	}

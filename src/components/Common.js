@@ -1,5 +1,7 @@
 import React from 'react'
 import { Button } from 'antd'
+import readySVG from '../img/ready.svg';
+import unreadySVG from '../img/unready.svg';
 
 class Common extends React.Component{
 
@@ -88,11 +90,35 @@ class Common extends React.Component{
 
 	render(){
 		const { web3 } = this.props
+		const style = {
+			filter: 'invert(100%)'
+		}
+		const center = {
+			display:"block",
+			marginLeft: "auto",
+			marginRight: "auto",
+			width: '40%'
+		}
 		return(
 			<div>
-				Current Gamer: {this.state.currentGameGamblers}/2
+			<div style={center}>
+			{
+				Array.apply(null, Array(this.state.currentGameGamblers)).map((x,i)=>
+					<img style={style} src={readySVG} width='100' height='100' key={i} />
+				)
+				
+			}
+			{
+				Array.apply(null, Array(2-this.state.currentGameGamblers)).map((x,i)=>
+					<img style={style} src={unreadySVG} width='100' height='100' key={i} />
+				)
+			}
+			</div>
+			<br/>
+				{this.state.currentGameGamblers}/2
+				<br/>
 				Current Balance: {web3.fromWei(this.state.balance)} ether
-				<Button onClick={this.getCurrentGamer}> Get Num Gamer</Button>
+				<br/>
 			</div>
 		)
 	}
