@@ -204,7 +204,7 @@ contract Gamble {
             gamblers[currentGameGamblers[i]].historyResult.push(resultMoney);
             gamblers[currentGameGamblers[i]].historyTime.push(gameTime);
             // Send out the event for game result per user
-            GameEndResult(msg.sender, currentGameGamblers[i], gamblers[currentGameGamblers[i]].balance);
+            GameEndResult(msg.sender, currentGameGamblers[i], resultMoney);
         }
 
         // Clean the list and end the game

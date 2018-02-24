@@ -5,7 +5,7 @@ import getWeb3 from './utils/getWeb3'
 import Common from './components/Common'
 import Gambler from './components/Gambler'
 import Owner from './components/Owner'
-import {Spin} from 'antd'
+import {Spin, Alert} from 'antd'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -19,7 +19,13 @@ class App extends Component {
 
     this.state = {
       storageValue: 0,
-      web3: null
+      web3: null,
+      alert:{
+        type:"",
+        msg:"",
+        desc:""
+      },
+      dispAlert:false
     }
   }
 
@@ -98,8 +104,19 @@ class App extends Component {
 
   }
 
+  setAlert(type, msg, desc){
+    this.setState({
+      alert:{type, msg, desc},
+      dispAlert:true
+    })
+
+    //kill the message after 1.5 sec
+
+    setTimeout(function(){this.setState({dispAlert:false})}.bind(this), 3000);
+  }
+
   render() {
-    const { account, gamble, web3, owner } = this.state
+    const {dispAlert, alert, account, gamble, web3, owner } = this.state
     // Display owner component when owner account gets selected in metamask
     return (
       <div className="App">
@@ -108,12 +125,17 @@ class App extends Component {
             <a href="#" className="pure-menu-heading pure-menu-link">DWRS - Decentralized Wealth Re-distribution System</a>
         </nav>
 
+        {dispAlert? (
+          <Alert message={alert.msg} description={alert.desc} type={alert.type} showIcon />
+        ) : (<div />)
+        }
+
         {gamble ? (
           <div>
-            <Common account={account} gamble={gamble} web3={web3}></Common>
-            <Gambler account={account} gamble={gamble} web3={web3}></Gambler>
+            <Common setAlert={this.setAlert.bind(this)} account={account} gamble={gamble} web3={web3}></Common>
+            <Gambler setAlert={this.setAlert.bind(this)} account={account} gamble={gamble} web3={web3}></Gambler>
             {owner === account ? (
-              <Owner account={account} gamble={gamble} web3={web3}></Owner>
+              <Owner setAlert={this.setAlert.bind(this)} account={account} gamble={gamble} web3={web3}></Owner>
             ) : (<div />)
             }
           </div>

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Button, Alert } from 'antd'
+import { Modal, Button } from 'antd';
 
 class Gambler extends React.Component{
 
@@ -8,12 +8,7 @@ class Gambler extends React.Component{
 		super(props);
 		this.state = {
 			joined: false,
-			alert:{
-				type:"",
-				msg:"",
-				desc:""
-			},
-			dispAlert:false
+			gameResultVisible: false
 		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
@@ -21,10 +16,17 @@ class Gambler extends React.Component{
 	}
 
 	componentDidMount(){
+		const {gamble} = this.props
 		// After mount, check is user in game
 		this.checkInGame(this.props.account)
-	}
 
+		this.gameEndResultEvent = gamble.GameEndResult(this.GameEndResultCallBack.bind(this))
+	}
+	componentWillUnmount() {
+		
+		this.gameEndResultEvent.stopWatching()
+	}
+	
 	componentWillReceiveProps(nextProps){
 		// If account get changed, re-check if user in game
 		if(this.props.account !== nextProps.account){
@@ -32,21 +34,10 @@ class Gambler extends React.Component{
 		}
   	}
 
-  	setAlert(type, msg, desc){
-  		this.setState({
-  			alert:{type, msg, desc},
-  			dispAlert:true
-  		})
-
-  		//kill the message after 1.5 sec
-
-  		setTimeout(function(){this.setState({dispAlert:false})}.bind(this), 1500);
-  	}
-
 	joinGame(){
 		// Join game, pay 1 ether at a time
 		// FIXME, and a box that allows you to pay arbitary number of ether at a time
-		const { gamble, account, web3 } = this.props
+		const { setAlert,gamble, account, web3 } = this.props
 		gamble.joinGame({
 			from: account,
 			value: web3.toWei(1)
@@ -55,7 +46,7 @@ class Gambler extends React.Component{
 			this.setState({
 				joined:true
 			})
-			this.setAlert(
+			setAlert(
 				"success",
 				"Join Game Success",
 				"You have joined game!"
@@ -63,7 +54,7 @@ class Gambler extends React.Component{
 		}).catch((error) => {
 			console.log("joinGame error!")
 			console.log("error")
-			this.setAlert(
+			setAlert(
 				"error",
 				"Join Game Error",
 				"Join game failed! Check metamask and console for error message!"
@@ -73,7 +64,7 @@ class Gambler extends React.Component{
 
 	quitGame(){
 		// Quit game
-		const { gamble, account } = this.props
+		const { setAlert,gamble, account } = this.props
 		gamble.quitGame({
 			from:account
 		}).then((result) => {
@@ -81,7 +72,7 @@ class Gambler extends React.Component{
 			this.setState({
 				joined:false
 			})
-			this.setAlert(
+			setAlert(
 				"success",
 				"Quit Game Success",
 				"You have quitted game!"
@@ -89,7 +80,7 @@ class Gambler extends React.Component{
 		}).catch((error) => {
 			console.log("quitGame error")
 			console.log(error)
-			this.setAlert(
+			setAlert(
 				"error",
 				"Quit Game Error",
 				"quit game failed! Check metamask and console for error message!"
@@ -99,12 +90,12 @@ class Gambler extends React.Component{
 
 	withDrawBalance(){
 		// Withdraw balance
-		const { gamble, account } = this.props
+		const { setAlert,gamble, account } = this.props
 		gamble.withdraw({
 			from:account
 		}).then((result) => {
 			console.log("balance withdrawed!")
-			this.setAlert(
+			setAlert(
 				"success",
 				"Withdraw Success",
 				"You have withdrawed eth!"
@@ -112,7 +103,7 @@ class Gambler extends React.Component{
 		}).catch((error) => {
 			console.log("withdraw error")
 			console.log(error)
-			this.setAlert(
+			setAlert(
 				"error",
 				"Withdraw Error",
 				"withdraw failed! Check metamask and console for error message!"
@@ -137,18 +128,42 @@ class Gambler extends React.Component{
 		})
 	}
 
+	GameEndResultCallBack(error, result){
+		const {account,web3} = this.props
+
+		if (error){
+			console.log("GameEndResult Event error")
+			console.log(error)
+			this.setAlert(
+				"error",
+				"GameEndResult Event Error",
+				"GameEndResult Event failed! Check metamask and console for error message!"
+			)
+		}else{
+			if(result.args.to == account){
+				const diff = web3.fromWei(result.args.amount.toNumber())
+				const msg =  diff <= 0  ? 
+				"Game Ended. You won " + diff + " eth.": 
+				"Game Ended. You lost " + (-diff) + " eth."
+
+				console.log(msg);
+				Modal.info({
+				title: 'Game End Result',
+				content: msg,
+				onOk() {}
+				});
+			}
+		}
+	}
+
 	render(){
-		const { dispAlert, alert } = this.state
+		
 		return(
 			<div>
 				Game joined : {this.state.joined.toString()}
 				<Button disabled={this.state.joined} onClick={this.joinGame}>Join Game</Button>
 				<Button disabled={!this.state.joined} onClick={this.quitGame}>Quit Game</Button>
 				<Button disabled={this.state.joined} onClick={this.withDrawBalance}> WithDraw Balance</Button>
-				{dispAlert? (
-					<Alert message={alert.msg} description={alert.desc} type={alert.type} showIcon />
-				) : (<div />)
-				}
 			</div>
 		)
 	}
