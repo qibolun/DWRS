@@ -17,6 +17,7 @@ class Gambler extends React.Component{
 		this.withDrawBalance = this.withDrawBalance.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.tipOwner = this.tipOwner.bind(this)
+		this.tipOwnerWhenWinMoney = this.tipOwnerWhenWinMoney.bind(this)
 	}
 
 	componentDidMount(){
@@ -192,6 +193,7 @@ class Gambler extends React.Component{
 			)
 		}else{
 			if(result.args.to === account){
+				console.log(result.args.amount.toNumber())
 				const diff = web3.fromWei(result.args.amount.toNumber()) - 1
 				const msg =  diff >= 0  ? 
 				"Game Ended. You won " + diff + " eth.": 
@@ -209,6 +211,11 @@ class Gambler extends React.Component{
 				})
 			}
 		}
+	}
+
+
+	tipOwnerWhenWinMoney(){
+		console.log("tip Owner?????")
 	}
 
 	render(){

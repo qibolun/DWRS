@@ -30,10 +30,15 @@ class Common extends React.Component{
 			}
 		}.bind(this))
 
-		this.UpdateGamerBalance = gamble.UpdateGamerBalance({to:account},{})
+		this.UpdateGamerBalance = gamble.UpdateGamerBalance()
 		this.UpdateGamerBalance.watch(function(error, result){
 			console.log("update gamer balance event triggered")
+			if (result.args.to !== this.props.account){
+				return
+			}
 			unloading()
+			console.log(result.args.to)
+			console.log(result.args.num.toNumber())
 			if(!error){
 				this.setState({
 					balance:result.args.num.toNumber()
