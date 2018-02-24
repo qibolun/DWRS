@@ -87,7 +87,9 @@ class Gambler extends React.Component{
 			});
 		})
 
-		this.onAmountModalCancel();
+		this.setState({
+	      amountModalVisible: false,
+	    });
 	}
 
 	quitGame(){
