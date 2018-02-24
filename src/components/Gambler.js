@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Button, Alert, Icon, Spin } from 'antd'
+import { Button, Alert, Input } from 'antd'
 
 class Gambler extends React.Component{
 
@@ -13,11 +13,14 @@ class Gambler extends React.Component{
 				msg:"",
 				desc:""
 			},
-			dispAlert:false
+			dispAlert:false,
+			eth:0
 		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
 		this.withDrawBalance = this.withDrawBalance.bind(this)
+		this.handleChange = this.handleChange.bind(this)
+		this.onClose = this.onClose.bind(this)
 	}
 
 	componentDidMount(){
@@ -37,10 +40,18 @@ class Gambler extends React.Component{
   			alert:{type, msg, desc},
   			dispAlert:true
   		})
+  	}
 
-  		//kill the message after 1.5 sec
+  	handleChange(event){
+  		this.setState({
+  			eth: event.target.value
+  		})
+  	}
 
-  		setTimeout(function(){this.setState({dispAlert:false})}.bind(this), 3000);
+  	onClose(event){
+  		this.setState({
+  			dispAlert:false
+  		})
   	}
 
 	joinGame(){
@@ -48,11 +59,12 @@ class Gambler extends React.Component{
 		// FIXME, and a box that allows you to pay arbitary number of ether at a time
 
 		const { gamble, account, web3, loading, unloading } = this.props
+		const { eth } = this.state
 		// start loading animation
 		loading()
 		gamble.joinGame({
 			from: account,
-			value: web3.toWei(1)
+			value: web3.toWei(eth)
 		}).then((result) => {
 			console.log("Game joined")
 			this.setState({
@@ -150,11 +162,12 @@ class Gambler extends React.Component{
 		return(
 			<div>
 				Game joined : {this.state.joined.toString()}
+				<Input placeholder="ether" type="number" value={this.state.eth} onChange={this.handleChange} />
 				<Button disabled={this.state.joined} onClick={this.joinGame}>Join Game</Button>
 				<Button disabled={!this.state.joined} onClick={this.quitGame}>Quit Game</Button>
 				<Button disabled={this.state.joined} onClick={this.withDrawBalance}> WithDraw Balance</Button>
 				{dispAlert? (
-					<Alert message={alert.msg} description={alert.desc} type={alert.type} showIcon />
+					<Alert message={alert.msg} description={alert.desc} type={alert.type} showIcon closable onClose={this.onClose}/>
 				) : (<div />)
 				}
 			</div>
