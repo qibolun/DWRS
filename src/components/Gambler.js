@@ -262,7 +262,7 @@ class Gambler extends React.Component{
 					okText:"Ok",
 					cancelText:"Skip",
 					onOk: okFunction,
-					onCancel() {}
+					onCancel: skipFunction
 
 				});
 				this.setState({
