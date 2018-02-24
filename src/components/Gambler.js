@@ -1,6 +1,6 @@
 import React from 'react'
 import Tip from './Tip'
-
+import Dice from './Dice'
 import { InputNumber,Modal,Button,notification} from 'antd'
 
 class Gambler extends React.Component{
@@ -12,7 +12,8 @@ class Gambler extends React.Component{
 			gameResultVisible: false,
 			eth:0,
 			amountModalVisible: false,
-			tipAmount:0
+			tipAmount:0,
+			DiceVisible: false,
 		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
@@ -302,18 +303,46 @@ class Gambler extends React.Component{
 	    });
 	}
 
-	  showAmountModal() {
+	showAmountModal() {
 	    this.setState({
 	      amountModalVisible: true,
 	    });
 	  }
 
+	showDiceModal() {
+	    this.setState({
+	      DiceVisible: true,
+	    });
+	  }
+
+
+	hideDiceModal() {
+	    this.setState({
+	      DiceVisible: false,
+	    });
+	 }
+
 	render(){
-		
+		const style={
+			margin: '20px'
+		}
+
 		return(
 			<div>
 				{this.RenderButtons()}
-				
+
+
+				<Button style={style} type="danger" icon="user-add" size='large' onClick={this.showDiceModal.bind(this)}> Dice </Button>
+				<Modal
+			        visible={this.state.DiceVisible}
+			        title="Rock&Roll"
+			        okText="Confirm"
+			        onCancel={this.hideDiceModal.bind(this)}
+			        onOk={this.hideDiceModal.bind(this)}
+			    >
+			        <Dice />
+			    </Modal>
+
 				<br/>
 
 				<Modal

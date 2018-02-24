@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from 'antd'
 import readySVG from '../img/ready.svg';
-import unreadySVG from '../img/unready.svg';
+import empty from '../img/empty.svg';
 
 class Common extends React.Component{
 
@@ -113,7 +113,7 @@ class Common extends React.Component{
 			}
 			{
 				Array.apply(null, Array(2-this.state.currentGameGamblers)).map((x,i)=>
-					<img style={style} src={unreadySVG} width='100' height='100' key={i} />
+					<img style={style} src={empty} width='100' height='100' key={i} />
 				)
 			}
 			</div>
