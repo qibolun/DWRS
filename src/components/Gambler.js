@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-import { Modal,Button, Input } from 'antd'
+import { Modal, Button, Input, notification } from 'antd'
 
 class Gambler extends React.Component{
 
@@ -77,8 +77,12 @@ class Gambler extends React.Component{
 			setAlert(
 				"error",
 				"Join Game Error",
-				"Join game failed! Check metamask and console for error message!"
+				"Join game failed! Check metamask and notification for error message!"
 			)
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
 		})
 	}
 
@@ -106,8 +110,13 @@ class Gambler extends React.Component{
 			setAlert(
 				"error",
 				"Quit Game Error",
-				"quit game failed! Check metamask and console for error message!"
+				"quit game failed! Check metamask and notification for error message!"
 			)
+
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
 		})
 	}
 
@@ -132,8 +141,13 @@ class Gambler extends React.Component{
 			setAlert(
 				"error",
 				"Withdraw Error",
-				"withdraw failed! Check metamask and console for error message!"
+				"withdraw failed! Check metamask and notification for error message!"
 			)
+
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
 		})
 
 	}
@@ -158,8 +172,13 @@ class Gambler extends React.Component{
 			setAlert(
 				"error",
 				"Tip Owner Error",
-				"tip owner failed! Check metamask and console for error message!"
+				"tip owner failed! Check metamask and notification for error message!"
 			)
+
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
 		})
 
 	}
@@ -189,8 +208,15 @@ class Gambler extends React.Component{
 			this.setAlert(
 				"error",
 				"GameEndResult Event Error",
-				"GameEndResult Event failed! Check metamask and console for error message!"
+				"GameEndResult Event failed! Check metamask and notification for error message!"
 			)
+
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
+
+
 		}else{
 			if(result.args.to === account){
 				console.log(result.args.amount.toNumber())
@@ -198,13 +224,11 @@ class Gambler extends React.Component{
 				const msg =  diff >= 0  ? 
 				"Game Ended. You won " + diff + " eth.": 
 				"Game Ended. You lost " + (-diff) + " eth."
-
-				console.log(msg);
 				Modal.info({
 					title: 'Game End Result',
 					content: msg,
 					okText:"Ok",
-					onOk() {}
+					onOk() {console.log(this)}
 				});
 				this.setState({
 					joined:false
