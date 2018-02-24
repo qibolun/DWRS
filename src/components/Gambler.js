@@ -1,6 +1,7 @@
 import React from 'react'
+import Tip from './Tip'
 
-import { InputNumber,Modal,Button} from 'antd'
+import { InputNumber,Modal,Button,notification} from 'antd'
 
 class Gambler extends React.Component{
 
@@ -11,6 +12,7 @@ class Gambler extends React.Component{
 			gameResultVisible: false,
 			eth:0,
 			amountModalVisible: false,
+			tipAmount:0
 		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
@@ -77,8 +79,12 @@ class Gambler extends React.Component{
 			setAlert(
 				"error",
 				"Join Game Error",
-				"Join game failed! Check metamask and console for error message!"
+				"Join game failed! Check metamask and notification for error message!"
 			)
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
 		})
 
 		this.onAmountModalCancel();
@@ -108,8 +114,13 @@ class Gambler extends React.Component{
 			setAlert(
 				"error",
 				"Quit Game Error",
-				"quit game failed! Check metamask and console for error message!"
+				"quit game failed! Check metamask and notification for error message!"
 			)
+
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
 		})
 	}
 
@@ -134,19 +145,39 @@ class Gambler extends React.Component{
 			setAlert(
 				"error",
 				"Withdraw Error",
-				"withdraw failed! Check metamask and console for error message!"
+				"withdraw failed! Check metamask and notification for error message!"
 			)
+
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
 		})
 
+	}
+
+	setTipAmount(amount){
+		console.log(amount)
+		this.setState({
+			tipAmount:amount
+		})
 	}
 
 	tipOwner(){
 		// tip contract owner
 		const { setAlert, gamble, account, web3 } = this.props
-		const amount = 0.1 //tip 0.1 eth now
+		const amount = this.state.tipAmount //tip 0.1 eth now
+		
+		this.setState({
+			tipAmount:0
+		})
+		if(amount <= 0){
+			return
+		}
+
 		gamble.tipOwner({
 			from: account,
-			value: web3.toWei(amount)
+			value: Math.floor(web3.toWei(amount))
 		}).then((result) => {
 			console.log("tipped owner")
 			setAlert(
@@ -160,8 +191,13 @@ class Gambler extends React.Component{
 			setAlert(
 				"error",
 				"Tip Owner Error",
-				"tip owner failed! Check metamask and console for error message!"
+				"tip owner failed! Check metamask and notification for error message!"
 			)
+
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
 		})
 
 	}
@@ -183,7 +219,7 @@ class Gambler extends React.Component{
 	}
 
 	GameEndResultCallBack(error, result){
-		const {account, web3, unloading} = this.props
+		const {account, web3, unloading, gamble } = this.props
 		unloading()
 		if (error){
 			console.log("GameEndResult Event error")
@@ -191,20 +227,46 @@ class Gambler extends React.Component{
 			this.setAlert(
 				"error",
 				"GameEndResult Event Error",
-				"GameEndResult Event failed! Check metamask and console for error message!"
+				"GameEndResult Event failed! Check metamask and notification for error message!"
 			)
+
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
+
+
 		}else{
 			if(result.args.to === account){
+				var okFunction = () => {
+					this.tipOwner()	
+				}
+
+				var skipFunction = () => {
+					this.setState({
+						tipAmount:0
+					})
+				}
+				console.log(result.args.amount.toNumber())
 				const diff = web3.fromWei(result.args.amount.toNumber()) - 1
 				const msg =  diff >= 0  ? 
-				"Game Ended. You won " + diff + " eth.": 
+				"Game Ended. You won " + diff + " eth. Please tip contract owner!": 
 				"Game Ended. You lost " + (-diff) + " eth."
-
-				console.log(msg);
-				Modal.info({
+				Modal.confirm({
 					title: 'Game End Result',
-					content: msg,
-					onOk() {}
+					content: <Tip 
+								msg={msg} 
+								diff={diff}
+								account={account} 
+                  				gamble={gamble} 
+                  				web3={web3}
+                  				setTipAmount = {this.setTipAmount.bind(this)}
+							 />,
+					okText:"Ok",
+					cancelText:"Skip",
+					onOk: okFunction,
+					onCancel: skipFunction
+
 				});
 				this.setState({
 					joined:false
@@ -248,7 +310,6 @@ class Gambler extends React.Component{
 		
 		return(
 			<div>
-
 				{this.RenderButtons()}
 				
 				<br/>
@@ -262,7 +323,6 @@ class Gambler extends React.Component{
 			    >
 			        <InputNumber defaultValue={0} min={0} max={10} step={0.1} formatter={value => `${value} ETH`} onChange={this.handleChange.bind(this)} />
 			    </Modal>
-
 			</div>
 		)
 	}
