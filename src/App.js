@@ -5,7 +5,8 @@ import getWeb3 from './utils/getWeb3'
 import Common from './components/Common'
 import Gambler from './components/Gambler'
 import Owner from './components/Owner'
-import {Spin, Alert} from 'antd'
+
+import { Spin, Icon ,Alert} from 'antd'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -25,8 +26,11 @@ class App extends Component {
         msg:"",
         desc:""
       },
-      dispAlert:false
+      dispAlert:false,
+      loading:false
     }
+
+    this.onClose = this.onClose.bind(this)
   }
 
   componentWillMount() {
@@ -82,6 +86,12 @@ class App extends Component {
     })
   }
 
+  onClose(event){
+    this.setState({
+      dispAlert:false
+    })
+  }
+
   componentDidMount(){
     // Do a polling to detect the account change
     this.timer = setInterval(()=> this.watchAccount(), 1000);
@@ -90,6 +100,19 @@ class App extends Component {
   componentWillUnmount() {
     this.timer = null;
   }
+
+  loading(){
+    this.setState({
+      loading:true
+    })
+  }
+
+  unloading(){
+    this.setState({
+      loading:false
+    })
+  }
+
 
   watchAccount(){
     if(this.state.web3 && this.state.account){
@@ -101,7 +124,6 @@ class App extends Component {
         })
       }
     }
-
   }
 
   setAlert(type, msg, desc){
@@ -109,10 +131,6 @@ class App extends Component {
       alert:{type, msg, desc},
       dispAlert:true
     })
-
-    //kill the message after 1.5 sec
-
-    setTimeout(function(){this.setState({dispAlert:false})}.bind(this), 3000);
   }
 
   render() {
@@ -126,18 +144,32 @@ class App extends Component {
         </nav>
 
         {dispAlert? (
-          <Alert message={alert.msg} description={alert.desc} type={alert.type} showIcon />
+          <Alert message={alert.msg} description={alert.desc} type={alert.type} showIcon closable onClose={this.onClose}/>
         ) : (<div />)
         }
 
         {gamble ? (
           <div>
-            <Common setAlert={this.setAlert.bind(this)} account={account} gamble={gamble} web3={web3}></Common>
-            <Gambler setAlert={this.setAlert.bind(this)} account={account} gamble={gamble} web3={web3}></Gambler>
-            {owner === account ? (
-              <Owner setAlert={this.setAlert.bind(this)} account={account} gamble={gamble} web3={web3}></Owner>
-            ) : (<div />)
-            }
+            <Spin spinning={this.state.loading}>
+              <Common 
+                setAlert={this.setAlert.bind(this)}
+                account={account} 
+                gamble={gamble} 
+                web3={web3} 
+                loading={this.loading.bind(this)}
+                unloading={this.unloading.bind(this)} />
+              <Gambler 
+                setAlert={this.setAlert.bind(this)}
+                account={account} 
+                gamble={gamble} 
+                web3={web3}
+                loading={this.loading.bind(this)}
+                unloading={this.unloading.bind(this)} />
+              {owner === account ? (
+                <Owner setAlert={this.setAlert.bind(this)} account={account} gamble={gamble} web3={web3}></Owner>
+              ) : (<div />)
+              }
+            </Spin>
           </div>
         ) : (
           <Spin tip="Loading..." />

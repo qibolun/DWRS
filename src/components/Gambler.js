@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { Modal, Button } from 'antd';
+
+import { Modal,Button, Input } from 'antd'
 
 class Gambler extends React.Component{
 
@@ -8,11 +9,13 @@ class Gambler extends React.Component{
 		super(props);
 		this.state = {
 			joined: false,
-			gameResultVisible: false
+			gameResultVisible: false,
+			eth:0
 		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
 		this.withDrawBalance = this.withDrawBalance.bind(this)
+		this.handleChange = this.handleChange.bind(this)
 	}
 
 	componentDidMount(){
@@ -34,13 +37,26 @@ class Gambler extends React.Component{
 		}
   	}
 
+
+  	handleChange(event){
+  		this.setState({
+  			eth: event.target.value
+  		})
+  	}
+
+
+
 	joinGame(){
 		// Join game, pay 1 ether at a time
 		// FIXME, and a box that allows you to pay arbitary number of ether at a time
-		const { setAlert,gamble, account, web3 } = this.props
+
+		const { setAlert,gamble, account, web3, loading, unloading } = this.props
+		const { eth } = this.state
+		// start loading animation
+		loading()
 		gamble.joinGame({
 			from: account,
-			value: web3.toWei(1)
+			value: web3.toWei(eth)
 		}).then((result) => {
 			console.log("Game joined")
 			this.setState({
@@ -54,6 +70,8 @@ class Gambler extends React.Component{
 		}).catch((error) => {
 			console.log("joinGame error!")
 			console.log("error")
+
+			unloading()
 			setAlert(
 				"error",
 				"Join Game Error",
@@ -64,7 +82,9 @@ class Gambler extends React.Component{
 
 	quitGame(){
 		// Quit game
-		const { setAlert,gamble, account } = this.props
+
+		const { setAlert,gamble, account, loading, unloading } = this.props
+		loading()
 		gamble.quitGame({
 			from:account
 		}).then((result) => {
@@ -78,6 +98,7 @@ class Gambler extends React.Component{
 				"You have quitted game!"
 			)
 		}).catch((error) => {
+			unloading()
 			console.log("quitGame error")
 			console.log(error)
 			setAlert(
@@ -90,7 +111,9 @@ class Gambler extends React.Component{
 
 	withDrawBalance(){
 		// Withdraw balance
-		const { setAlert,gamble, account } = this.props
+
+		const { setAlert,gamble, account, loading, unloading } = this.props
+		loading()
 		gamble.withdraw({
 			from:account
 		}).then((result) => {
@@ -101,6 +124,7 @@ class Gambler extends React.Component{
 				"You have withdrawed eth!"
 			)
 		}).catch((error) => {
+			unloading()
 			console.log("withdraw error")
 			console.log(error)
 			setAlert(
@@ -141,8 +165,8 @@ class Gambler extends React.Component{
 			)
 		}else{
 			if(result.args.to == account){
-				const diff = web3.fromWei(result.args.amount.toNumber())
-				const msg =  diff <= 0  ? 
+				const diff = web3.fromWei(result.args.amount.toNumber()) - 1
+				const msg =  diff >= 0  ? 
 				"Game Ended. You won " + diff + " eth.": 
 				"Game Ended. You lost " + (-diff) + " eth."
 
@@ -161,9 +185,11 @@ class Gambler extends React.Component{
 		return(
 			<div>
 				Game joined : {this.state.joined.toString()}
+				<Input placeholder="ether" type="number" value={this.state.eth} onChange={this.handleChange} />
 				<Button disabled={this.state.joined} onClick={this.joinGame}>Join Game</Button>
 				<Button disabled={!this.state.joined} onClick={this.quitGame}>Quit Game</Button>
 				<Button disabled={this.state.joined} onClick={this.withDrawBalance}> WithDraw Balance</Button>
+
 			</div>
 		)
 	}
