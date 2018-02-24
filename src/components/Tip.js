@@ -19,7 +19,7 @@ class Tip extends React.Component{
 		const { diff } = this.props
 		const tipPercent = e.target.value
 		this.setState({tipPercent: e.target.value})
-		this.props.setTipAmount(diff*parseInt(tipPercent)/100)
+		this.props.setTipAmount(diff*parseInt(tipPercent, 10)/100)
 	}
 
 
@@ -39,7 +39,7 @@ class Tip extends React.Component{
 				          <Radio.Button value="2">2%</Radio.Button>
 				          <Radio.Button value="3">3%</Radio.Button>
 				        </Radio.Group>
-				         {(diff*parseInt(tipPercent)/100).toString()} ether
+				         {(diff*parseInt(tipPercent,10)/100).toString()} ether
 				    </div>
 				): (<div />)}
 				

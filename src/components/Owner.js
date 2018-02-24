@@ -1,13 +1,9 @@
 import React from 'react'
 import { Button,Modal } from 'antd'
 class Owner extends React.Component{
-	constructor(props){
-		super(props)
-	}
-
 
 	componentDidMount(){
-		const { gamble, account, web3 } = this.props
+		const { gamble, web3 } = this.props
 		this.OwnerReceivedTips = gamble.OwnerReceivedTips()
 		this.OwnerReceivedTips.watch((error, result) => {
 			if(!error){

@@ -1,7 +1,8 @@
 import React from 'react'
 import Tip from './Tip'
+import LeadingBoard from './LeadingBoard'
 
-import { InputNumber,Modal,Button,notification} from 'antd'
+import { InputNumber, Modal, Button, notification } from 'antd'
 
 class Gambler extends React.Component{
 
@@ -12,13 +13,15 @@ class Gambler extends React.Component{
 			gameResultVisible: false,
 			eth:0,
 			amountModalVisible: false,
-			tipAmount:0
+			tipAmount:0,
+			totalNumGamer:2
 		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
 		this.withDrawBalance = this.withDrawBalance.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.tipOwner = this.tipOwner.bind(this)
+		this.resultEvents = []
 
 	}
 
@@ -27,7 +30,7 @@ class Gambler extends React.Component{
 		// After mount, check is user in game
 		this.checkInGame(this.props.account)
 
-		this.gameEndResultEvent = gamble.GameEndResult(this.GameEndResultCallBack.bind(this))
+		this.gameEndResultEvent = gamble.GameEndResult(this.gameEndResultCallBack.bind(this))
 	}
 	componentWillUnmount() {
 		
@@ -40,7 +43,6 @@ class Gambler extends React.Component{
 			this.checkInGame(nextProps.account)
 		}
   	}
-
 
   	handleChange(value){
   		this.setState({
@@ -159,7 +161,6 @@ class Gambler extends React.Component{
 	}
 
 	setTipAmount(amount){
-		console.log(amount)
 		this.setState({
 			tipAmount:amount
 		})
@@ -220,7 +221,7 @@ class Gambler extends React.Component{
 		})
 	}
 
-	GameEndResultCallBack(error, result){
+	gameEndResultCallBack(error, result){
 		const {account, web3, unloading, gamble } = this.props
 		unloading()
 		if (error){
@@ -239,6 +240,7 @@ class Gambler extends React.Component{
 
 
 		}else{
+			this.gameLeadingBoard(result.args)
 			if(result.args.to === account){
 				var okFunction = () => {
 					this.tipOwner()	
@@ -262,7 +264,7 @@ class Gambler extends React.Component{
 								account={account} 
                   				gamble={gamble} 
                   				web3={web3}
-                  				setTipAmount = {this.setTipAmount.bind(this)}
+                  				setTipAmount={this.setTipAmount.bind(this)}
 							 />,
 					okText:"Ok",
 					cancelText:"Skip",
@@ -277,7 +279,45 @@ class Gambler extends React.Component{
 		}
 	}
 
-	RenderButtons(props){
+	gameLeadingBoard(event){
+		const { totalNumGamer } = this.state
+		const { web3 } = this.props
+		this.resultEvents = [...this.resultEvents, {account:event.to, result: web3.fromWei(event.amount.toNumber()) - 1}]
+		if(this.resultEvents.length === totalNumGamer){
+			this.displayLeadingBoard()
+		}
+
+	}
+
+	displayLeadingBoard(){
+		// Display leading board
+		function compare(a,b) {
+			if (a.result < b.result)
+				return 1;
+			if (a.result > b.result)
+				return -1;
+			return 0;
+		}
+		this.resultEvents.sort(compare)
+		let msg = ""
+		let rank = 1
+		let data = []
+		for (let i=0; i<this.resultEvents.length; i++){
+			msg = rank+". "+this.resultEvents[i].account+" "+this.resultEvents[i].result
+			rank += 1
+			data = [...data, msg]
+		}
+
+		notification.open({
+			message: 'Game Result',
+			description: <LeadingBoard data={data} />,
+		});
+
+		this.resultEvents = []
+
+	}
+
+	renderButtons(props){
 
 		const style={
 			margin: '10px'
@@ -312,7 +352,7 @@ class Gambler extends React.Component{
 		
 		return(
 			<div>
-				{this.RenderButtons()}
+				{this.renderButtons()}
 				
 				<br/>
 
