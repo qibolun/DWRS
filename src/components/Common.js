@@ -1,5 +1,4 @@
 import React from 'react'
-import { Button } from 'antd'
 import readySVG from '../img/ready.svg';
 import empty from '../img/empty.svg';
 
@@ -17,7 +16,7 @@ class Common extends React.Component{
 	}
 
 	componentDidMount(){
-		const { gamble, account, unloading } = this.props
+		const { gamble, unloading } = this.props
 		// Start Watch UpdateGamerNum event
 		this.UpdateGamerNum = gamble.UpdateGamerNum()
 		this.UpdateGamerNum.watch(function(error, result){
@@ -107,7 +106,7 @@ class Common extends React.Component{
 			<div style={center}>
 			{
 				Array.apply(null, Array(this.state.currentGameGamblers)).map((x,i)=>
-					<img style={style} src={readySVG} width='100' height='100' key={i} />
+					<img style={style} alt="" src={readySVG} width='100' height='100' key={i} />
 				)
 				
 			}

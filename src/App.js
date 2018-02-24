@@ -7,7 +7,7 @@ import Common from './components/Common'
 import Gambler from './components/Gambler'
 import Owner from './components/Owner'
 
-import { Spin, Icon ,Alert, Col, Row} from 'antd'
+import { Spin ,Alert, Col, Row} from 'antd'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -118,6 +118,7 @@ class App extends Component {
 
 
   watchAccount(){
+    // console.log(this.state.web3.eth.accounts)
     if(this.state.web3 && this.state.account){
       if (this.state.web3.eth.accounts[0] !== this.state.account){
         //Update state when account change
