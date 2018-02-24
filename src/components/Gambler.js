@@ -1,4 +1,5 @@
 import React from 'react'
+import Tip from './Tip'
 
 
 import { Modal, Button, Input, notification } from 'antd'
@@ -10,14 +11,14 @@ class Gambler extends React.Component{
 		this.state = {
 			joined: false,
 			gameResultVisible: false,
-			eth:0
+			eth:0,
+			tipAmount:0
 		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
 		this.withDrawBalance = this.withDrawBalance.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.tipOwner = this.tipOwner.bind(this)
-		this.tipOwnerWhenWinMoney = this.tipOwnerWhenWinMoney.bind(this)
 	}
 
 	componentDidMount(){
@@ -152,13 +153,28 @@ class Gambler extends React.Component{
 
 	}
 
+	setTipAmount(amount){
+		console.log(amount)
+		this.setState({
+			tipAmount:amount
+		})
+	}
+
 	tipOwner(){
 		// tip contract owner
 		const { setAlert, gamble, account, web3 } = this.props
-		const amount = 0.1 //tip 0.1 eth now
+		const amount = this.state.tipAmount //tip 0.1 eth now
+		
+		this.setState({
+			tipAmount:0
+		})
+		if(amount <= 0){
+			return
+		}
+
 		gamble.tipOwner({
 			from: account,
-			value: web3.toWei(amount)
+			value: Math.floor(web3.toWei(amount))
 		}).then((result) => {
 			console.log("tipped owner")
 			setAlert(
@@ -200,7 +216,7 @@ class Gambler extends React.Component{
 	}
 
 	GameEndResultCallBack(error, result){
-		const {account, web3, unloading} = this.props
+		const {account, web3, unloading, gamble } = this.props
 		unloading()
 		if (error){
 			console.log("GameEndResult Event error")
@@ -219,27 +235,41 @@ class Gambler extends React.Component{
 
 		}else{
 			if(result.args.to === account){
+				var okFunction = () => {
+					this.tipOwner()	
+				}
+
+				var skipFunction = () => {
+					this.setState({
+						tipAmount:0
+					})
+				}
 				console.log(result.args.amount.toNumber())
 				const diff = web3.fromWei(result.args.amount.toNumber()) - 1
 				const msg =  diff >= 0  ? 
-				"Game Ended. You won " + diff + " eth.": 
+				"Game Ended. You won " + diff + " eth. Please tip contract owner!": 
 				"Game Ended. You lost " + (-diff) + " eth."
-				Modal.info({
+				Modal.confirm({
 					title: 'Game End Result',
-					content: msg,
+					content: <Tip 
+								msg={msg} 
+								diff={diff}
+								account={account} 
+                  				gamble={gamble} 
+                  				web3={web3}
+                  				setTipAmount = {this.setTipAmount.bind(this)}
+							 />,
 					okText:"Ok",
-					onOk() {console.log(this)}
+					cancelText:"Skip",
+					onOk: okFunction,
+					onCancel() {}
+
 				});
 				this.setState({
 					joined:false
 				})
 			}
 		}
-	}
-
-
-	tipOwnerWhenWinMoney(){
-		console.log("tip Owner?????")
 	}
 
 	render(){
@@ -251,7 +281,6 @@ class Gambler extends React.Component{
 				<Button disabled={this.state.joined} onClick={this.joinGame}>Join Game</Button>
 				<Button disabled={!this.state.joined} onClick={this.quitGame}>Quit Game</Button>
 				<Button disabled={this.state.joined} onClick={this.withDrawBalance}> WithDraw Balance</Button>
-				<Button onClick={this.tipOwner}> Tip Owner</Button>
 			</div>
 		)
 	}
