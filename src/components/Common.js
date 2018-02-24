@@ -37,8 +37,6 @@ class Common extends React.Component{
 				return
 			}
 			unloading()
-			console.log(result.args.to)
-			console.log(result.args.num.toNumber())
 			if(!error){
 				this.setState({
 					balance:result.args.num.toNumber()
