@@ -1,15 +1,15 @@
 {
   "contractName": "SafeMath",
   "abi": [],
-  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a723058207bade99789f137cccef03c12578e34c0aef08251ec51a7e48b87207e73ab5ac70029",
-  "deployedBytecode": "0x6060604052600080fd00a165627a7a723058207bade99789f137cccef03c12578e34c0aef08251ec51a7e48b87207e73ab5ac70029",
+  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a72305820b567815f2db482fbd6803f868012815a1d379b7e0b583f8392e40ab4bbba8a300029",
+  "deployedBytecode": "0x6060604052600080fd00a165627a7a72305820b567815f2db482fbd6803f868012815a1d379b7e0b583f8392e40ab4bbba8a300029",
   "sourceMap": "117:698:2:-;;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "117:698:2:-;;;;;",
   "source": "pragma solidity ^0.4.11;\n\n\n/**\n * @title SafeMath\n * @dev Math operations with safety checks that throw on error\n */\nlibrary SafeMath {\n  function mul(uint256 a, uint256 b) internal constant returns (uint256) {\n    uint256 c = a * b;\n    assert(a == 0 || c / a == b);\n    return c;\n  }\n\n  function div(uint256 a, uint256 b) internal constant returns (uint256) {\n    // assert(b > 0); // Solidity automatically throws when dividing by 0\n    uint256 c = a / b;\n    // assert(a == b * c + a % b); // There is no case in which this doesn't hold\n    return c;\n  }\n\n  function sub(uint256 a, uint256 b) internal constant returns (uint256) {\n    assert(b <= a);\n    return a - b;\n  }\n\n  function add(uint256 a, uint256 b) internal constant returns (uint256) {\n    uint256 c = a + b;\n    assert(c >= a);\n    return c;\n  }\n}",
-  "sourcePath": "/Users/joeycao/DWRS/contracts/SafeMath.sol",
+  "sourcePath": "/home/daze/Desktop/DWRS/contracts/SafeMath.sol",
   "ast": {
     "attributes": {
-      "absolutePath": "/Users/joeycao/DWRS/contracts/SafeMath.sol",
+      "absolutePath": "/home/daze/Desktop/DWRS/contracts/SafeMath.sol",
       "exportedSymbols": {
         "SafeMath": [
           941
@@ -1321,9 +1321,9 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x25cbab0c13650026c7bcbcce7ef963c303b68cd6"
+      "address": "0x2e335f247e91caa168c64b63104c4475b2af3942"
     }
   },
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-02-24T02:45:54.506Z"
+  "updatedAt": "2018-02-24T02:52:04.289Z"
 }

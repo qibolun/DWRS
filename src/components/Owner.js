@@ -16,6 +16,7 @@ class Owner extends React.Component{
 				Modal.info({
 					title: 'You have received tips!',
 					content: "You have received " + web3.fromWei(result.args.num.toNumber()) + " eth from " + result.args.from ,
+					okText:"Ok",
 					onOk() {}
 				});
 			}else{

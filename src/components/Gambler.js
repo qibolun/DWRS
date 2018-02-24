@@ -201,6 +201,7 @@ class Gambler extends React.Component{
 				Modal.info({
 					title: 'Game End Result',
 					content: msg,
+					okText:"Ok",
 					onOk() {}
 				});
 				this.setState({
