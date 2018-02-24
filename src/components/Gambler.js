@@ -321,7 +321,7 @@ class Gambler extends React.Component{
 			        onCancel={this.onAmountModalCancel.bind(this)}
 			        onOk={this.joinGame}
 			    >
-			        <InputNumber defaultValue={0} min={0} max={10} step={0.1} formatter={value => `${value}  ETH`} parser={value => value.replace(' ETH', '')} onChange={this.handleChange.bind(this)} />
+			        <InputNumber defaultValue={0} min={0} max={10} step={0.1} onChange={this.handleChange.bind(this)} /> ETH
 			    </Modal>
 			</div>
 		)
