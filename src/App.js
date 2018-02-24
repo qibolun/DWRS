@@ -166,7 +166,13 @@ class App extends Component {
                 loading={this.loading.bind(this)}
                 unloading={this.unloading.bind(this)} />
               {owner === account ? (
-                <Owner setAlert={this.setAlert.bind(this)} account={account} gamble={gamble} web3={web3}></Owner>
+                <Owner 
+                  setAlert={this.setAlert.bind(this)} 
+                  account={account} 
+                  gamble={gamble} 
+                  web3={web3}
+                  loading={this.loading.bind(this)}
+                  unloading={this.unloading.bind(this)} />
               ) : (<div />)
               }
             </Spin>

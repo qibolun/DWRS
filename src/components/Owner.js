@@ -11,7 +11,8 @@ class Owner extends React.Component{
 		
 	}
 	startGame(){
-		const {gamble,setAlert,account} = this.props
+		const { gamble,setAlert,account,loading,unloading } = this.props
+		loading()
 		gamble.startGame({
 			from:account
 		}).then(() => {
@@ -19,6 +20,7 @@ class Owner extends React.Component{
 		}).catch((error) => {
 			console.log("startGame error")
 			console.log(error)
+			unloading()
 			setAlert(
 				"error",
 				"Start Game Error",

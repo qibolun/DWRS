@@ -153,8 +153,8 @@ class Gambler extends React.Component{
 	}
 
 	GameEndResultCallBack(error, result){
-		const {account,web3} = this.props
-
+		const {account, web3, unloading} = this.props
+		unloading()
 		if (error){
 			console.log("GameEndResult Event error")
 			console.log(error)
@@ -172,10 +172,13 @@ class Gambler extends React.Component{
 
 				console.log(msg);
 				Modal.info({
-				title: 'Game End Result',
-				content: msg,
-				onOk() {}
+					title: 'Game End Result',
+					content: msg,
+					onOk() {}
 				});
+				this.setState({
+					joined:false
+				})
 			}
 		}
 	}
