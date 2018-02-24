@@ -1,5 +1,5 @@
 import React from 'react'
-import {Button} from 'antd'
+import { Button,Modal } from 'antd'
 class Owner extends React.Component{
 	constructor(props){
 		super(props)
@@ -7,9 +7,28 @@ class Owner extends React.Component{
 
 
 	componentDidMount(){
-		//const { gamble } = this.props
+		const { gamble, account, web3 } = this.props
+		this.OwnerReceivedTips = gamble.OwnerReceivedTips()
+		this.OwnerReceivedTips.watch((error, result) => {
+			if(!error){
+				console.log(result)
+				console.log("got tip from other")
+				Modal.info({
+					title: 'You have received tips!',
+					content: "You have received " + web3.fromWei(result.args.num.toNumber()) + " eth from " + result.args.from ,
+					onOk() {}
+				});
+			}else{
+				console.log(error)
+			}
+		})
 		
 	}
+
+	componentWillUnmount(){
+		this.OwnerReceivedTips.stopWatching()
+	}
+
 	startGame(){
 		const { gamble,setAlert,account,loading,unloading } = this.props
 		loading()
