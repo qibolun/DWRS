@@ -1,13 +1,9 @@
 import React from 'react'
 import Tip from './Tip'
-<<<<<<< HEAD
 import Dice from './Dice'
 import { InputNumber,Modal,Button,notification} from 'antd'
-=======
 import LeadingBoard from './LeadingBoard'
 
-import { InputNumber, Modal, Button, notification } from 'antd'
->>>>>>> 0d8fa6b8377f1a19d39a28863d890003ca7ec2b3
 
 class Gambler extends React.Component{
 
@@ -19,11 +15,8 @@ class Gambler extends React.Component{
 			eth:0,
 			amountModalVisible: false,
 			tipAmount:0,
-<<<<<<< HEAD
 			DiceVisible: false,
-=======
 			totalNumGamer:2
->>>>>>> 0d8fa6b8377f1a19d39a28863d890003ca7ec2b3
 		}
 		this.joinGame = this.joinGame.bind(this)
 		this.quitGame = this.quitGame.bind(this)
@@ -377,7 +370,7 @@ class Gambler extends React.Component{
 
 		return(
 			<div>
-				{this.RenderButtons()}
+				{this.renderButtons()}
 
 
 				<Button style={style} type="danger" icon="user-add" size='large' onClick={this.showDiceModal.bind(this)}> Dice </Button>
@@ -390,7 +383,7 @@ class Gambler extends React.Component{
 			    >
 			        <Dice />
 			    </Modal>
-			    
+
 				<br/>
 
 				<Modal
