@@ -51,7 +51,7 @@ class Owner extends React.Component{
 	render(){
 
 		const style = {
-			marginTop: '100px',
+			marginTop: '80px',
 			backgroundColor: '#52c41a',
 			borderColor: '#52c41a',
 			height: '100px',
