@@ -1,17 +1,20 @@
 import React from 'react'
-
 import { List } from 'antd'
 
 class LeadingBoard extends React.Component{
 
 	render(){
+		const Item = List.Item
 		return(
 			<div>
-				{this.props.data.map((v) => (
-					<div key={v}>
-						{v}
-					</div>
-				))}
+				<List>
+					{
+						this.props.data.map((v)=>(
+							<Item key={v}> {v} </Item>
+						))
+					}
+				</List>
+				
 			</div>
 		)
 	}

@@ -1,7 +1,7 @@
 import React from 'react'
 import Tip from './Tip'
 import Dice from './Dice'
-import { InputNumber,Modal,Button,notification} from 'antd'
+import { InputNumber, Modal, Button, notification, List } from 'antd'
 import LeadingBoard from './LeadingBoard'
 
 
@@ -23,6 +23,7 @@ class Gambler extends React.Component{
 		this.withDrawBalance = this.withDrawBalance.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.tipOwner = this.tipOwner.bind(this)
+		this.getGameHistory = this.getGameHistory.bind(this)
 		this.resultEvents = []
 
 	}
@@ -171,7 +172,7 @@ class Gambler extends React.Component{
 	tipOwner(){
 		// tip contract owner
 		const { setAlert, gamble, account, web3 } = this.props
-		const amount = this.state.tipAmount //tip 0.1 eth now
+		const amount = this.state.tipAmount
 		
 		this.setState({
 			tipAmount:0
@@ -207,10 +208,50 @@ class Gambler extends React.Component{
 
 	}
 
+	getGameHistory(){
+		const { setAlert, account, gamble, web3 } = this.props
+		gamble.getLastFiveGameResult(account, {
+			from:account
+		}).then((result) => {
+			let numResult = []
+			for(let i=0; i<result.length; i++){
+				if (result[i].toNumber() === 0){
+					continue
+				}
+				numResult = [ ...numResult, web3.fromWei(result[i].toNumber())-1]
+			}
+			const li = <List
+		      bordered
+		      dataSource={numResult}
+		      renderItem={item => (<List.Item>You get {item}</List.Item>)}
+		    />
+			Modal.info({
+				title: "Game Result History",
+				content: li,
+				okText:"Ok",
+				onOk() {}
+			})
+		}).catch((error) => {
+			console.log("Get Game History error!")
+			setAlert(
+				"error",
+				"Get Game History Error",
+				"get game history failed! Check metamask and notification for error message!"
+			)
+
+			notification.open({
+				message: 'Error Message',
+    			description: error.toString(),
+			});
+
+		})
+
+	}
+
 	checkInGame(account){
 		const { gamble } = this.props
 		gamble.checkGamblerInGame(account, {
-			from:account,
+			from:account
 		}).then((result) => {
 			this.setState({
 				joined:result
@@ -253,7 +294,6 @@ class Gambler extends React.Component{
 						tipAmount:0
 					})
 				}
-				console.log(result.args.amount.toNumber())
 				const diff = web3.fromWei(result.args.amount.toNumber()) - 1
 				const msg =  diff >= 0  ? 
 				"Game Ended. You won " + diff + " eth. Please tip contract owner!": 
@@ -329,13 +369,14 @@ class Gambler extends React.Component{
 		}else{
 			return (
 				<div>
-			<Button style={style} type="primary" icon="user-add" size='large' onClick={this.showAmountModal.bind(this)}> Ready </Button>
-			<br/>
-			<Button style={style} type="primary" icon="user-add" size='default' onClick={this.withDrawBalance}> WithDraw Balance</Button>
-			</div>
+					<Button style={style} type="primary" icon="user-add" size='large' onClick={this.showAmountModal.bind(this)}> Ready </Button>
+					<br/>
+					<Button style={style} type="primary" icon="user-add" size='default' onClick={this.withDrawBalance}> WithDraw Balance</Button>
+				</div>
 			)
 		}
 	}
+
 
 	onAmountModalCancel(){
 		this.props.unloading()
@@ -374,6 +415,7 @@ class Gambler extends React.Component{
 
 
 				<Button style={style} type="danger" icon="user-add" size='large' onClick={this.showDiceModal.bind(this)}> Dice </Button>
+				<Button type="primary" onClick={this.getGameHistory}> Get Game History </Button>
 				<Modal
 			        visible={this.state.DiceVisible}
 			        title="Rock&Roll"

@@ -174,6 +174,17 @@ contract Gamble {
         return ( _quotient);
     }
 
+    function getLastFiveGameResult(address gamblerId) public constant  gamblerExist(gamblerId) returns(uint[5] results){
+        var gambler = gamblers[gamblerId];
+        uint numGameResult = gambler.historyResult.length;
+        if (numGameResult > 5){
+            numGameResult = 5;
+        }
+        for(uint i=0; i<numGameResult; i++){
+            results[i] = gambler.historyResult[numGameResult-1-i];
+        }
+
+    }
     // Start a Game
     function startGame() public onlyOwner{
         // Game can be start only when number of gamblers equal to maxGamblerInGame
@@ -219,4 +230,4 @@ contract Gamble {
 
     }
     
-}
+}   
