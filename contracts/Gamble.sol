@@ -27,7 +27,7 @@ contract Gamble {
     }
 
     // Event sending out the game result
-    event GameEndResult(address from, address to, uint amount);
+    event GameEndResult(address from, address to, uint amount, uint dice);
 
     // Event when number of gamer changed
     event UpdateGamerNum(uint num);
@@ -193,13 +193,16 @@ contract Gamble {
         inGame = true;
 
         uint[] memory gamblerRandVal = new uint[](maxGamblerInGame);
+        uint[] memory diceVal = new uint[](maxGamblerInGame);
         uint totalRandVal;
         uint totalMoney = 0;
         uint gameTime = now;
         uint i = 0;
         // Get a random value for each gamblers
         for(i=0; i<currentGameGamblers.length; i++){
-            gamblerRandVal[i] = _getRandomValue(100, currentGameGamblers[i]).add(1);
+            // Mimic a dice roll from 1~6
+            gamblerRandVal[i] = _getRandomValue(6, currentGameGamblers[i]).add(1);
+            diceVal[i] = gamblerRandVal[i];
             totalRandVal = totalRandVal.add(gamblerRandVal[i]);
             totalMoney = totalMoney.add(1 ether);
         }
@@ -219,7 +222,7 @@ contract Gamble {
             gamblers[currentGameGamblers[i]].historyResult.push(resultMoney);
             gamblers[currentGameGamblers[i]].historyTime.push(gameTime);
             // Send out the event for game result per user
-            GameEndResult(msg.sender, currentGameGamblers[i], resultMoney);
+            GameEndResult(msg.sender, currentGameGamblers[i], resultMoney, diceVal[i]);
             UpdateGamerBalance(currentGameGamblers[i], gamblers[currentGameGamblers[i]].balance);
         }
 
